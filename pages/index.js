@@ -5,12 +5,56 @@ import styles from "../styles/Home.module.css";
 
 const CELL_SIZE = 50;
 
+function sizeByOrientation(size, orientation) {
+  if (orientation === "horizontal") {
+    return {
+      width: size * CELL_SIZE,
+      height: CELL_SIZE,
+    };
+  } else {
+    return {
+      width: CELL_SIZE,
+      height: size * CELL_SIZE,
+    };
+  }
+}
+
 function pointsAreClose(point1, point2, threshold = 1) {
   var dx = Math.abs(point2.x - point1.x);
   var dy = Math.abs(point2.y - point1.y);
   var diagonalDistance = Math.sqrt(dx * dx + dy * dy);
 
   return dx <= threshold && dy <= threshold && diagonalDistance === threshold;
+}
+
+function objectsAreConnected(element1, element2) {
+  const firstStart = element1;
+  const secondEnd = {
+    x:
+      element2.x +
+      (element2.orientation === "horizontal" ? element2.size - 1 : 0),
+    y:
+      element2.y +
+      (element2.orientation === "vertical" ? element2.size - 1 : 0),
+  };
+  const firstEnd = {
+    x:
+      element1.x +
+      (element1.orientation === "horizontal" ? element1.size - 1 : 0),
+    y:
+      element1.y +
+      (element1.orientation === "vertical" ? element1.size - 1 : 0),
+  };
+  const secondStart = element2;
+
+  console.log(element1, element2, secondEnd);
+
+  return (
+    pointsAreClose(firstStart, secondEnd) ||
+    pointsAreClose(firstEnd, secondStart) ||
+    pointsAreClose(firstStart, secondStart) ||
+    pointsAreClose(firstEnd, secondEnd)
+  );
 }
 
 const doSomethingWithState = (state) => {
@@ -23,8 +67,11 @@ const doSomethingWithState = (state) => {
     return;
   }
 
-  console.log(pointsAreClose(first[1], second[1]));
+  console.log(objectsAreConnected(first[1], second[1]));
 };
+
+const EL1_SIZE = 3;
+const EL2_SIZE = 4;
 
 export default function Home() {
   const [state, setState] = useState({});
@@ -39,6 +86,8 @@ export default function Home() {
     setState((state) => ({
       ...state,
       [id]: {
+        orientation: data.node.dataset.orientation,
+        size: +data.node.dataset.size,
         x,
         y,
       },
@@ -68,19 +117,30 @@ export default function Home() {
             scale={1}
             onStop={onStop}
           >
-            <div className={`${styles.drag} handle`} id="1"></div>
+            <div
+              className={`${styles.drag} handle`}
+              id="1"
+              data-size={EL1_SIZE}
+              data-orientation="vertical"
+              style={sizeByOrientation(EL1_SIZE, "vertical")}
+            ></div>
           </Draggable>
           <Draggable
             handle=".handle"
             bounds="parent"
             defaultPosition={{ x: 0, y: 0 }}
-            positionOffset={{ x: 0, y: -CELL_SIZE }}
             position={null}
             grid={[CELL_SIZE, CELL_SIZE]}
             scale={1}
             onStop={onStop}
           >
-            <div className={`${styles.drag} handle`} id="2"></div>
+            <div
+              className={`${styles.drag} handle`}
+              id="2"
+              data-size={EL2_SIZE}
+              data-orientation="horizontal"
+              style={sizeByOrientation(EL2_SIZE, "horizontal")}
+            ></div>
           </Draggable>
         </div>
       </main>
