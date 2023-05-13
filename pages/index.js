@@ -1,8 +1,54 @@
 import Head from "next/head";
+import { useState, useEffect } from "react";
 import Draggable from "react-draggable";
 import styles from "../styles/Home.module.css";
 
+const CELL_SIZE = 50;
+
+function pointsAreClose(point1, point2, threshold = 1) {
+  var dx = Math.abs(point2.x - point1.x);
+  var dy = Math.abs(point2.y - point1.y);
+  var diagonalDistance = Math.sqrt(dx * dx + dy * dy);
+
+  return dx <= threshold && dy <= threshold && diagonalDistance === threshold;
+}
+
+const doSomethingWithState = (state) => {
+  console.log("doSomethingWithState", state);
+
+  const items = Object.entries(state);
+  console.log("items", items);
+  const [first, second] = items;
+  if (!first || !second) {
+    return;
+  }
+
+  console.log(pointsAreClose(first[1], second[1]));
+};
+
 export default function Home() {
+  const [state, setState] = useState({});
+
+  const onStop = (e, data) => {
+    // console.log("onStop", e, data);
+    const id = data.node.id;
+    const x = data.x / CELL_SIZE;
+    const y = data.y / CELL_SIZE;
+    console.log("id", id, x, y);
+
+    setState((state) => ({
+      ...state,
+      [id]: {
+        x,
+        y,
+      },
+    }));
+  };
+
+  useEffect(() => {
+    doSomethingWithState(state);
+  }, [state]);
+
   return (
     <div className={styles.container}>
       <Head>
@@ -12,15 +58,31 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
-        <Draggable
-          handle=".handle"
-          defaultPosition={{ x: 0, y: 0 }}
-          position={null}
-          grid={[50, 50]}
-          scale={1}
-        >
-          <div className={`${styles.drag} handle`}>drag and drop</div>
-        </Draggable>
+        <div className={styles.grid}>
+          <Draggable
+            handle=".handle"
+            bounds="parent"
+            defaultPosition={{ x: 0, y: 0 }}
+            position={null}
+            grid={[CELL_SIZE, CELL_SIZE]}
+            scale={1}
+            onStop={onStop}
+          >
+            <div className={`${styles.drag} handle`} id="1"></div>
+          </Draggable>
+          <Draggable
+            handle=".handle"
+            bounds="parent"
+            defaultPosition={{ x: 0, y: 0 }}
+            positionOffset={{ x: 0, y: -CELL_SIZE }}
+            position={null}
+            grid={[CELL_SIZE, CELL_SIZE]}
+            scale={1}
+            onStop={onStop}
+          >
+            <div className={`${styles.drag} handle`} id="2"></div>
+          </Draggable>
+        </div>
       </main>
     </div>
   );
