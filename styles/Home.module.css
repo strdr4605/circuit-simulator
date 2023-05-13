@@ -2,6 +2,11 @@
   padding: 0 2rem;
 }
 
+.drag {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+}
+
 .main {
   min-height: 100vh;
   padding: 4rem 0;
