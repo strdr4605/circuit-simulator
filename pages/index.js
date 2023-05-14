@@ -120,7 +120,7 @@ export default function Home() {
   };
 
   const onStart = (e, data) => {
-    setLedColor("#f1f1f1");
+    setLedColor("unset");
   };
 
   useEffect(() => {
