@@ -4,12 +4,15 @@
 
 .drag {
   position: absolute;
-  padding: 0.5rem;
+  /* padding: 0.5rem; */
   width: 150px;
   height: 50px;
   background-color: #f1f1f1;
   box-sizing: border-box;
   border: 1px solid #ccc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .conector {
@@ -30,7 +33,7 @@
 
 .grid {
   position: relative;
-  background-color: #faf151;
+  background-color: #aaa;
   width: 800px;
   height: 800px;
 }

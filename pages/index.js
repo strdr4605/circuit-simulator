@@ -47,8 +47,6 @@ function objectsAreConnected(element1, element2) {
   };
   const secondStart = element2;
 
-  console.log(element1, element2, secondEnd);
-
   return (
     pointsAreClose(firstStart, secondEnd) ||
     pointsAreClose(firstEnd, secondStart) ||
@@ -61,13 +59,22 @@ const doSomethingWithState = (state) => {
   console.log("doSomethingWithState", state);
 
   const items = Object.entries(state);
-  console.log("items", items);
-  const [first, second] = items;
-  if (!first || !second) {
-    return;
+  const collisions = [];
+  for (const [id1, item1] of items) {
+    for (const [id2, item2] of items) {
+      if (id1 === id2) {
+        continue;
+      }
+      if (objectsAreConnected(item1, item2)) {
+        const collision = [id1, id2].sort().join("-");
+        if (!collisions.includes(collision)) {
+          collisions.push(collision);
+        }
+      }
+    }
   }
 
-  console.log(objectsAreConnected(first[1], second[1]));
+  console.log("collisions", collisions);
 };
 
 const EL1_SIZE = 3;
@@ -81,7 +88,6 @@ export default function Home() {
     const id = data.node.id;
     const x = data.x / CELL_SIZE;
     const y = data.y / CELL_SIZE;
-    console.log("id", id, x, y);
 
     setState((state) => ({
       ...state,
@@ -119,11 +125,19 @@ export default function Home() {
           >
             <div
               className={`${styles.drag} handle`}
-              id="1"
+              id="source"
               data-size={EL1_SIZE}
               data-orientation="vertical"
-              style={sizeByOrientation(EL1_SIZE, "vertical")}
-            ></div>
+              style={{
+                ...sizeByOrientation(EL1_SIZE, "vertical"),
+                backgroundColor: "red",
+                borderRadius: "1rem",
+                borderTop: "3px solid green",
+                borderBottom: "3px solid blue",
+              }}
+            >
+              sursă
+            </div>
           </Draggable>
           <Draggable
             handle=".handle"
@@ -136,11 +150,35 @@ export default function Home() {
           >
             <div
               className={`${styles.drag} handle`}
-              id="2"
+              id="resistor"
+              data-size={EL2_SIZE}
+              data-orientation="horizontal"
+              style={{
+                ...sizeByOrientation(EL2_SIZE, "horizontal"),
+                backgroundColor: "yellow",
+              }}
+            >
+              rezistor
+            </div>
+          </Draggable>
+          <Draggable
+            handle=".handle"
+            bounds="parent"
+            defaultPosition={{ x: 0, y: 0 }}
+            position={null}
+            grid={[CELL_SIZE, CELL_SIZE]}
+            scale={1}
+            onStop={onStop}
+          >
+            <div
+              className={`${styles.drag} handle`}
+              id="led"
               data-size={EL2_SIZE}
               data-orientation="horizontal"
               style={sizeByOrientation(EL2_SIZE, "horizontal")}
-            ></div>
+            >
+              led
+            </div>
           </Draggable>
         </div>
       </main>
