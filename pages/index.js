@@ -67,10 +67,11 @@ function objectsAreConnected(element1, element2) {
 
 const EL1_SIZE = 3;
 const EL2_SIZE = 4;
+const LED_SIZE = 2;
 
 export default function Home() {
   const [state, setState] = useState({});
-  const [ledColor, setLedColor] = useState("#f1f1f1");
+  const [ledColor, setLedColor] = useState("unset");
 
   const doSomethingWithState = (state) => {
     console.log("doSomethingWithState", state);
@@ -95,9 +96,9 @@ export default function Home() {
     console.log("connections", JSON.stringify(connections, null, 2));
 
     if (ledConnectedToSource(connections)) {
-      setLedColor("yellow");
+      setLedColor("0 0 50px 20px red");
     } else {
-      setLedColor("#f1f1f1");
+      setLedColor("unset");
     }
   };
 
@@ -158,19 +159,16 @@ export default function Home() {
             onStart={onStart}
           >
             <div
-              className={`${styles.drag} handle`}
+              className={`${styles.drag} handle ${styles.source}`}
               id="source"
               data-size={EL1_SIZE}
               data-orientation="vertical"
               style={{
                 ...sizeByOrientation(EL1_SIZE, "vertical"),
-                backgroundColor: "red",
                 borderTop: "3px solid green",
                 borderBottom: "3px solid blue",
               }}
-            >
-              sursă
-            </div>
+            ></div>
           </Draggable>
           <Draggable
             handle=".handle"
@@ -183,7 +181,7 @@ export default function Home() {
             onStart={onStart}
           >
             <div
-              className={`${styles.drag} handle`}
+              className={`${styles.drag} handle ${styles.resistor}`}
               id="resistor"
               data-size={EL2_SIZE}
               data-orientation="horizontal"
@@ -191,9 +189,7 @@ export default function Home() {
                 ...sizeByOrientation(EL2_SIZE, "horizontal"),
                 backgroundColor: "#faf191",
               }}
-            >
-              rezistor
-            </div>
+            ></div>
           </Draggable>
           <Draggable
             handle=".handle"
@@ -206,19 +202,17 @@ export default function Home() {
             onStart={onStart}
           >
             <div
-              className={`${styles.drag} handle`}
+              className={`${styles.drag} handle ${styles.led}`}
               id="led"
-              data-size={EL2_SIZE}
+              data-size={LED_SIZE}
               data-orientation="horizontal"
               style={{
-                ...sizeByOrientation(EL2_SIZE, "horizontal"),
-                backgroundColor: ledColor,
+                ...sizeByOrientation(LED_SIZE, "horizontal"),
+                boxShadow: ledColor,
                 borderLeft: "3px solid green",
                 borderRight: "3px solid blue",
               }}
-            >
-              led
-            </div>
+            ></div>
           </Draggable>
         </div>
       </main>

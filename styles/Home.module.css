@@ -33,3 +33,21 @@
   position: relative;
   background-color: #aaa;
 }
+
+.led {
+  background-image: url("/led.png");
+  background-size: cover;
+  background-position: center;
+}
+
+.resistor {
+  background-image: url("/resistor.png");
+  background-size: cover;
+  background-position: center;
+}
+
+.source {
+  background-image: url("/source.png");
+  background-size: cover;
+  background-position: center;
+}
