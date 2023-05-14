@@ -35,19 +35,19 @@
 }
 
 .led {
-  background-image: url("/led.png");
+  background-image: url("/circuit-simulator/led.png");
   background-size: cover;
   background-position: center;
 }
 
 .resistor {
-  background-image: url("/resistor.png");
+  background-image: url("/circuit-simulator/resistor.png");
   background-size: cover;
   background-position: center;
 }
 
 .source {
-  background-image: url("/source.png");
+  background-image: url("/circuit-simulator/source.png");
   background-size: cover;
   background-position: center;
 }
