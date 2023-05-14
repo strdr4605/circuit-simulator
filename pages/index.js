@@ -5,6 +5,13 @@ import styles from "../styles/Home.module.css";
 
 const CELL_SIZE = 50;
 
+function ledConnectedToSource(connections) {
+  return (
+    connections["resistor-source"] === "A-A" &&
+    connections["led-resistor"] === "A-B"
+  );
+}
+
 function sizeByOrientation(size, orientation) {
   if (orientation === "horizontal") {
     return {
@@ -58,34 +65,41 @@ function objectsAreConnected(element1, element2) {
   );
 }
 
-const doSomethingWithState = (state) => {
-  console.log("doSomethingWithState", state);
-
-  const items = Object.entries(state);
-  const connections = {};
-  for (const [id1, item1] of items) {
-    for (const [id2, item2] of items) {
-      if (id1 === id2) {
-        continue;
-      }
-      const maybeCollides = objectsAreConnected(item1, item2);
-      if (maybeCollides) {
-        const collision = [id1, id2].sort().join("-");
-        if (!connections[collision]) {
-          connections[collision] = maybeCollides.join("-");
-        }
-      }
-    }
-  }
-
-  console.log("connections", JSON.stringify(connections, null, 2));
-};
-
 const EL1_SIZE = 3;
 const EL2_SIZE = 4;
 
 export default function Home() {
   const [state, setState] = useState({});
+  const [ledColor, setLedColor] = useState("#f1f1f1");
+
+  const doSomethingWithState = (state) => {
+    console.log("doSomethingWithState", state);
+
+    const items = Object.entries(state);
+    const connections = {};
+    for (const [id1, item1] of items) {
+      for (const [id2, item2] of items) {
+        if (id1 === id2) {
+          continue;
+        }
+        const maybeCollides = objectsAreConnected(item1, item2);
+        if (maybeCollides) {
+          const collision = [id1, id2].sort().join("-");
+          if (!connections[collision]) {
+            connections[collision] = maybeCollides.join("-");
+          }
+        }
+      }
+    }
+
+    console.log("connections", JSON.stringify(connections, null, 2));
+
+    if (ledConnectedToSource(connections)) {
+      setLedColor("yellow");
+    } else {
+      setLedColor("#f1f1f1");
+    }
+  };
 
   const onStop = (e, data) => {
     // console.log("onStop", e, data);
@@ -102,6 +116,10 @@ export default function Home() {
         y,
       },
     }));
+  };
+
+  const onStart = (e, data) => {
+    setLedColor("#f1f1f1");
   };
 
   useEffect(() => {
@@ -126,6 +144,7 @@ export default function Home() {
             grid={[CELL_SIZE, CELL_SIZE]}
             scale={1}
             onStop={onStop}
+            onStart={onStart}
           >
             <div
               className={`${styles.drag} handle`}
@@ -135,7 +154,6 @@ export default function Home() {
               style={{
                 ...sizeByOrientation(EL1_SIZE, "vertical"),
                 backgroundColor: "red",
-                borderRadius: "1rem",
                 borderTop: "3px solid green",
                 borderBottom: "3px solid blue",
               }}
@@ -151,6 +169,7 @@ export default function Home() {
             grid={[CELL_SIZE, CELL_SIZE]}
             scale={1}
             onStop={onStop}
+            onStart={onStart}
           >
             <div
               className={`${styles.drag} handle`}
@@ -159,7 +178,7 @@ export default function Home() {
               data-orientation="horizontal"
               style={{
                 ...sizeByOrientation(EL2_SIZE, "horizontal"),
-                backgroundColor: "yellow",
+                backgroundColor: "#faf191",
               }}
             >
               rezistor
@@ -173,13 +192,19 @@ export default function Home() {
             grid={[CELL_SIZE, CELL_SIZE]}
             scale={1}
             onStop={onStop}
+            onStart={onStart}
           >
             <div
               className={`${styles.drag} handle`}
               id="led"
               data-size={EL2_SIZE}
               data-orientation="horizontal"
-              style={sizeByOrientation(EL2_SIZE, "horizontal")}
+              style={{
+                ...sizeByOrientation(EL2_SIZE, "horizontal"),
+                backgroundColor: ledColor,
+                borderLeft: "3px solid green",
+                borderRight: "3px solid blue",
+              }}
             >
               led
             </div>
