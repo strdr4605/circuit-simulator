@@ -209,6 +209,8 @@ export default function Home() {
               style={{
                 ...sizeByOrientation(LED_SIZE, "horizontal"),
                 boxShadow: ledColor,
+                border:
+                  ledColor !== "0 0 50px 20px red" ? "none" : "6px solid red",
                 borderLeft: "3px solid green",
                 borderRight: "3px solid blue",
               }}
