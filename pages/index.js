@@ -19,12 +19,15 @@ function sizeByOrientation(size, orientation) {
   }
 }
 
-function pointsAreClose(point1, point2, threshold = 1) {
+function pointsAreClose(point1, point2, a, b) {
+  const threshold = 1;
   var dx = Math.abs(point2.x - point1.x);
   var dy = Math.abs(point2.y - point1.y);
   var diagonalDistance = Math.sqrt(dx * dx + dy * dy);
 
-  return dx <= threshold && dy <= threshold && diagonalDistance === threshold;
+  if (dx <= threshold && dy <= threshold && diagonalDistance === threshold) {
+    return [a, b];
+  }
 }
 
 function objectsAreConnected(element1, element2) {
@@ -48,10 +51,10 @@ function objectsAreConnected(element1, element2) {
   const secondStart = element2;
 
   return (
-    pointsAreClose(firstStart, secondEnd) ||
-    pointsAreClose(firstEnd, secondStart) ||
-    pointsAreClose(firstStart, secondStart) ||
-    pointsAreClose(firstEnd, secondEnd)
+    pointsAreClose(firstStart, secondEnd, "A", "B") ||
+    pointsAreClose(firstEnd, secondStart, "B", "A") ||
+    pointsAreClose(firstStart, secondStart, "A", "A") ||
+    pointsAreClose(firstEnd, secondEnd, "B", "B")
   );
 }
 
@@ -59,22 +62,23 @@ const doSomethingWithState = (state) => {
   console.log("doSomethingWithState", state);
 
   const items = Object.entries(state);
-  const collisions = [];
+  const connections = {};
   for (const [id1, item1] of items) {
     for (const [id2, item2] of items) {
       if (id1 === id2) {
         continue;
       }
-      if (objectsAreConnected(item1, item2)) {
+      const maybeCollides = objectsAreConnected(item1, item2);
+      if (maybeCollides) {
         const collision = [id1, id2].sort().join("-");
-        if (!collisions.includes(collision)) {
-          collisions.push(collision);
+        if (!connections[collision]) {
+          connections[collision] = maybeCollides.join("-");
         }
       }
     }
   }
 
-  console.log("collisions", collisions);
+  console.log("connections", JSON.stringify(connections, null, 2));
 };
 
 const EL1_SIZE = 3;
