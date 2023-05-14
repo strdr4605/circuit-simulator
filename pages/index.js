@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Draggable from "react-draggable";
 import styles from "../styles/Home.module.css";
 
@@ -126,6 +126,16 @@ export default function Home() {
     doSomethingWithState(state);
   }, [state]);
 
+  useEffect(() => {
+    const element = document.querySelector("#grid");
+    const viewportWidth = window.innerWidth;
+    const roundedViewportWidth = Math.floor(viewportWidth / 100) * 100;
+    element.style.width = `${roundedViewportWidth}px`;
+    const viewportHeight = window.innerHeight;
+    const roundedViewportHeight = Math.floor(viewportHeight / 100) * 100;
+    element.style.height = `${roundedViewportHeight}px`;
+  }, []);
+
   return (
     <div className={styles.container}>
       <Head>
@@ -135,7 +145,8 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
-        <div className={styles.grid}>
+        <h1 className={styles.title}>Circuit Simulator</h1>
+        <div id="grid" className={styles.grid}>
           <Draggable
             handle=".handle"
             bounds="parent"
